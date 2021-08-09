@@ -1,0 +1,11 @@
+#.
+#.  Please do edit this file manually because there are no other commands!
+#.
+welcome1:
+  location: spawn, 143.5, 11.000, 202.5
+  linespacing: 2.24
+  viewdistance: 35
+  lines:
+    - '<red>Hello all! MiniMessage support is here!'
+    - '<white>Hello %essentials_nickname%!'
+    - 'literally no other support :wink:'

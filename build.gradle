@@ -1,0 +1,97 @@
+import java.text.SimpleDateFormat
+
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.5.21"
+    id "java"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+}
+
+group = "club.blocklounge.mc.vholos"
+version = "6.9"
+
+task buildJar(dependsOn: [clean, shadowJar])
+
+ext {
+    basePlace = "club.blocklounge.mc.vholos.shaded."
+}
+
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
+
+shadowJar {
+    archiveFileName = "VHolos-${project.version}.jar"
+    relocate "com.github", "${basePlace}cache"
+    relocate "net.kyori.adventure.text.minimessage", "${basePlace}minimessage"
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "16"
+        freeCompilerArgs = ["-Xjvm-default=all"]
+    }
+}
+
+dependencies {
+    shadow localGroovy()
+    shadow gradleApi()
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+
+    implementation "net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT"
+    implementation "net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT"
+    implementation "com.github.ben-manes.caffeine:caffeine:3.0.3"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.21"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-common:1.5.21'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.21"
+    //implementation "org.jetbrains.jotlin:kotlin-reflect:1.5"
+
+
+    compileOnly "me.clip:placeholderapi:2.10.10"
+    compileOnly "org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT"
+    compileOnly "com.comphenix.protocol:ProtocolLib:4.7.0"
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy = DuplicatesStrategy.WARN
+        include "plugin.yml"
+        expand(
+                name: rootProject.name,
+                main: project.group + ".module.internal.boot.PluginBoot",
+                version: project.version,
+                built: new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),
+                builder: System.properties.getProperty("user.name"),
+                os: System.properties.getProperty("os.name") + System.properties.getProperty("os.arch") + System.properties.getProperty("os.version")
+        )
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+
+    maven {
+        url "https://gitlab.com/api/v4/projects/19978391/packages/maven"
+    }
+    maven {
+        url "https://mvn.intellectualsites.com/content/repositories/thirdparty/"
+    }
+    maven {
+        url "https://papermc.io/repo/repository/maven-public/"
+    }
+    maven {
+        url "https://repo.dmulloy2.net/repository/public/"
+    }
+    maven {
+        url "https://libraries.minecraft.net"
+    }
+    maven {
+        url "https://jitpack.io"
+    }
+    maven {
+        url "https://repo.extendedclip.com/content/repositories/placeholderapi/"
+    }
+}

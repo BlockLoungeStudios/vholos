@@ -1,0 +1,28 @@
+name: vholos
+main: club.blocklounge.mc.vholos.vholos
+
+authors: [VQ9]
+
+api-version: 1.17
+version: ${version}
+
+github: https://github.com/VQ9/${name}
+description: vholos plugin. Packet based holograms! Contributions dearly welcomed.
+
+depend:
+  - PlayerControlPlus
+  - PremiumVanish
+  - LuckPerms
+  - HeadDatabase
+  - UltraPunishments
+  - ProtocolLib
+
+built-time: ${built}
+built-by: ${builder}
+built-os: ${os}
+
+commands:
+  vholos:
+    description: Information about vholos
+    usage: /<command>
+    permission: vholos.use
