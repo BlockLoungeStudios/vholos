@@ -2,7 +2,7 @@
 #.  Please do edit this file manually because there are no other commands!
 #.
 welcome1:
-  location: spawn, 143.5, 11.000, 202.5
+  location: world, 100.000, 100.000, 100.000
   linespacing: 2.24
   viewdistance: 35
   lines:

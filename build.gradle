@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "club.blocklounge.mc.vholos"
-version = "6.9"
+version = "1.0.0"
 
 task buildJar(dependsOn: [clean, shadowJar])
 

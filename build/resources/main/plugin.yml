@@ -4,7 +4,7 @@ main: club.blocklounge.mc.vholos.vholos
 authors: [VQ9]
 
 api-version: 1.17
-version: 6.9
+version: 1.0.0
 
 github: https://github.com/VQ9/vholos
 description: vholos plugin. Packet based holograms! Contributions dearly welcomed.
@@ -17,7 +17,7 @@ depend:
   - UltraPunishments
   - ProtocolLib
 
-built-time: 2021-08-01 23:26:01
+built-time: 2021-08-09 20:43:23
 built-by: nonos
 built-os: Windows 10amd6410.0
 
