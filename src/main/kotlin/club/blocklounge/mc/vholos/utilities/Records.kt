@@ -13,6 +13,4 @@ class Records {
 
     @JvmRecord
     data class HologramViewers(val mutableAudience: List<Player>)
-    @JvmRecord
-    data class HologramAnimationFrames(val frames: HashMap<Int, String>)
 }

@@ -16,7 +16,6 @@ class Runnable {
         val cacheCreate = HashMap<Int, PacketContainer>()
         val cacheMeta = HashMap<Int, PacketContainer>()
         val cacheDelete = HashMap<Int, PacketContainer>()
-        var prevMetaPacket = HashMap<Player, PacketContainer>()
         var database = Database()
         var utilities = Hologram()
         var holoTaskId = 0
@@ -33,12 +32,13 @@ class Runnable {
         //Hologram view list
         lateinit var hologramViewList: HashMap<Int, Records.HologramViewers>
         //Hologram animation list
-        lateinit var hologramAnimation: HashMap<Int, Records.HologramAnimationFrames>
+        lateinit var hologramAnimation: HashMap<Int, HashMap<Player, PacketContainer>>
     }
     
     fun runHologram() {
         //Create new instances so that when reloaded new instances are made of all
         hologramViewList = HashMap()
+        hologramAnimation = HashMap()
 
         hologramInDatabaseFileList = mutableListOf()
         hologramInAPIList = mutableListOf()

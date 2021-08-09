@@ -3,6 +3,7 @@ package club.blocklounge.mc.vholos.utilities
 import club.blocklounge.mc.vholos.protoTools.CompatabilityManager
 import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable
+import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramAnimation
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramInAPIList
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramInDatabaseFileList
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramIndividualList
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player
 import org.gradle.internal.impldep.com.fasterxml.jackson.databind.exc.InvalidFormatException
 import java.io.IOException
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class Hologram {
@@ -28,6 +30,7 @@ class Hologram {
 
         hologramInDatabaseFileList.clear()
         hologramIndividualList.clear()
+        hologramAnimation.clear()
 
         addHologramsFromDatabase()
 
@@ -133,9 +136,7 @@ class Hologram {
                     .write(0, individualHologramInformation.eid)
                 val newHoloName = PlaceholderAPI.setPlaceholders(player, individualHologramInformation.line)
 
-                val wrappedChatComponent = WrappedChatComponent.fromJson(
-                    GsonComponentSerializer.gson().serialize(
-                        MiniMessage.get().parse(newHoloName)))
+                val wrappedChatComponent = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(MiniMessage.get().parse(newHoloName)))
 
                 val content: MutableList<WrappedWatchableObject> = ArrayList()
                 content.add(
@@ -167,13 +168,13 @@ class Hologram {
         }
         else {
             val metaDataPacket = PacketContainer(PacketType.Play.Server.ENTITY_METADATA)
+
             metaDataPacket.integers
                 .write(0, individualHologramInformation.eid)
             val newHoloName = PlaceholderAPI.setPlaceholders(player, individualHologramInformation.line)
 
-            val wrappedChatComponent = WrappedChatComponent.fromJson(
-                GsonComponentSerializer.gson().serialize(
-                    MiniMessage.get().parse(newHoloName)))
+            val wrappedChatComponent = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(MiniMessage.get().parse(newHoloName)))
+
             val content: MutableList<WrappedWatchableObject> = ArrayList()
             content.add(
                 WrappedWatchableObject(
@@ -206,15 +207,24 @@ class Hologram {
     fun sendUpdatePacket(player: Player, individualHologramInformation: Records.IndividualHologramInformation) {
         val toSendPacket = createUpdatePacket(individualHologramInformation, player)
         try {
-            if (Runnable.prevMetaPacket.contains(player)) {
-                if (Runnable.prevMetaPacket[player] != toSendPacket) {
+            if (hologramAnimation.contains(individualHologramInformation.eid)) {
+                if (hologramAnimation[individualHologramInformation.eid]!!.containsKey(player)) {
+                    if (hologramAnimation[individualHologramInformation.eid]!![player]!! != toSendPacket) {
+                        vholos.protocolManager.sendServerPacket(player, toSendPacket)
+                    }
+                }
+                else {
+                    hologramAnimation[individualHologramInformation.eid]!![player] = toSendPacket
                     vholos.protocolManager.sendServerPacket(player, toSendPacket)
-                    Runnable.prevMetaPacket[player] = toSendPacket
                 }
             }
             else {
+                //TODO(I have no idea what I am doing!)
+
+                val newHoloViewer: HashMap<Player, PacketContainer> = HashMap()
+                newHoloViewer[player] = toSendPacket
+                hologramAnimation[individualHologramInformation.eid] = newHoloViewer
                 vholos.protocolManager.sendServerPacket(player, toSendPacket)
-                Runnable.prevMetaPacket[player] = toSendPacket
             }
         }
         catch (e: IOException) {
