@@ -10,12 +10,8 @@ github: https://github.com/VQ9/${name}
 description: vholos plugin. Packet based holograms! Contributions dearly welcomed.
 
 depend:
-  - PlayerControlPlus
-  - PremiumVanish
-  - LuckPerms
-  - HeadDatabase
-  - UltraPunishments
   - ProtocolLib
+  - PlaceholderAPI
 
 built-time: ${built}
 built-by: ${builder}

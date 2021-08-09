@@ -22,6 +22,8 @@ shadowJar {
     archiveFileName = "VHolos-${project.version}.jar"
     relocate "com.github", "${basePlace}cache"
     relocate "net.kyori.adventure.text.minimessage", "${basePlace}minimessage"
+    relocate "com.google", "${basePlace}google"
+    relocate "org.jetbrains", "${basePlace}kotlin"
 }
 
 compileKotlin {
