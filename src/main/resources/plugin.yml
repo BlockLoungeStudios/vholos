@@ -20,5 +20,5 @@ built-os: ${os}
 commands:
   vholos:
     description: Information about vholos
-    usage: /<command>
+    usage: /<command> <suboption>
     permission: vholos.use
