@@ -1,9 +1,11 @@
 #!/bin/bash
 
-JV=`java -version 2>&1 >/dev/null | head -1`
-echo "$JV" | sed -E 's/^.*version "([^".]*)\.[^"]*".*$/\1/'
+# https://github.com/jitpack/jitpack.io/issues/4355#issuecomment-744678253
 
-if [ "$JV" != 15 ]; then
+JV=`java -version 2>&1 >/dev/null | head -1`
+echo $JV | sed -E 's/^.*version "([^".]*)\.[^"]*".*$/\1/'
+
+if [ "$JV" != 16 ]; then
 	case "$1" in
 	install)
 		echo "installing sdkman..."
