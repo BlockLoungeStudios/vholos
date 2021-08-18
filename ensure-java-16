@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 JV=`java -version 2>&1 >/dev/null | head -1`
