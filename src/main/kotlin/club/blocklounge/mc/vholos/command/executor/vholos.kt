@@ -34,25 +34,25 @@ class vholos : @Nullable CommandExecutor {
 
     private fun reload(sender: CommandSender) {
         if (sender.hasPermission("vholos.reload")) {
-            vholos.logger.info("Reloading started")
+            vholos.logging.info("Reloading started")
             vholos.taskManager.cancelTask(Runnable.holoTaskId)
-            vholos.logger.info(" ~ Cancelled task")
+            vholos.logging.info(" ~ Cancelled task")
 
             Runnable.cacheCreate.clear()
             Runnable.cacheMeta.clear()
             Runnable.cacheDelete.clear()
             Runnable.utilities.clearTotalHologramView()
-            vholos.logger.info(" ~ Refreshed cache")
+            vholos.logging.info(" ~ Refreshed cache ~")
 
             Runnable.utilities.reloadOrLoadHologramList()
-            vholos.logger.info(" ~ Reloaded holograms from lists")
+            vholos.logging.info(" ~ Reloaded holograms from lists")
 
             vholos.runnable = Runnable()
             vholos.runnable.runHologram()
-            vholos.logger.info(" ~ Created new instance and ran it")
+            vholos.logging.info(" ~ Created new instance and ran it")
 
             vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] Reloaded!"))
-            vholos.logger.info("Reloading complete")
+            vholos.logging.info("Reloading complete")
         }
         else {
             vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] You do not have permission"))

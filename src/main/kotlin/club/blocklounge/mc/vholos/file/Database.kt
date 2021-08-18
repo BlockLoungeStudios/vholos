@@ -39,7 +39,7 @@ class Database {
                 mutableHologramList.add(createHologramFromNameInDatabase(name))
             }
             catch (e: Exception) {
-                vholos.logger.error(e.toString())
+                vholos.logging.error(e.toString())
             }
         }
         //addToListIDs(mutableHologramList)
@@ -64,7 +64,7 @@ class Database {
                 }
             }
             else {
-                vholos.logger.error("The database file is incorrectly made!")
+                vholos.logging.error("The database file is incorrectly made!")
             }
         }
         return Records.GeneralHologramInformation("null", listOf("null", "null"), Location(null, 0.0, 0.0, 0.0), 0.0, 0)

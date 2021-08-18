@@ -3,11 +3,9 @@ package club.blocklounge.mc.vholos.compat.wrapper
 import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable
 import org.bukkit.Location
-import org.gradle.internal.impldep.it.unimi.dsi.fastutil.Hash
 import java.lang.reflect.Field
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.HashMap
 
 
 class Wrapper1_17 {

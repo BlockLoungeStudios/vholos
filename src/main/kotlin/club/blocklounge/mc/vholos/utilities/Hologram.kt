@@ -1,6 +1,5 @@
 package club.blocklounge.mc.vholos.utilities
 
-import club.blocklounge.mc.vholos.compat.wrapper.Wrapper1_17
 import club.blocklounge.mc.vholos.protoTools.CompatabilityManager
 import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable
@@ -22,11 +21,8 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.bukkit.scheduler.BukkitRunnable
-import org.gradle.internal.impldep.com.fasterxml.jackson.databind.exc.InvalidFormatException
 import java.io.IOException
 import java.util.*
-import kotlin.collections.HashMap
 
 
 class Hologram {
@@ -131,7 +127,7 @@ class Hologram {
             vholos.protocolManager.sendServerPacket(player, toSendPacket)
         }
         catch (e: IOException) {
-            vholos.logger.error(e.toString())
+            vholos.logging.error(e.toString())
         }
     }
 
@@ -234,7 +230,7 @@ class Hologram {
             }
         }
         catch (e: IOException) {
-            vholos.logger.error(e.toString())
+            vholos.logging.error(e.toString())
         }
     }
 
@@ -269,7 +265,7 @@ class Hologram {
             //Runnable.prevMetaPacket[player] = toSendPackets.second
         }
         catch (e: IOException) {
-            vholos.logger.error(e.toString())
+            vholos.logging.error(e.toString())
         }
     }
 
@@ -307,15 +303,13 @@ class Hologram {
                     vholos.protocolManager.sendServerPacket(onlinePlayer, createDeletePacket(hologram.eid))
                 }
                 catch (e: IOException) {
-                    vholos.logger.error(e.toString())
+                    vholos.logging.error(e.toString())
                 }
             }
         }
     }
 
-    @Throws(InvalidFormatException::class)
     fun getHologramLocationFromString(input: String): Location? {
-
         val parts = input.split(",").toTypedArray()
         if (parts.size != 4) {
             return null

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory
 
 class vholos : JavaPlugin() {
     companion object {
-        lateinit var logger: Logger
+        lateinit var logging: Logger
         lateinit var protocolManager: ProtocolManager
         lateinit var instance: Plugin
         lateinit var audience: BukkitAudiences
@@ -37,9 +37,6 @@ class vholos : JavaPlugin() {
         val utilManager = Utils()
     }
 
-
-    private val logger: Logger = LoggerFactory.getLogger("vholos")
-
     override fun onEnable() {
         registerCommands()
         defineLateInits()
@@ -56,13 +53,13 @@ class vholos : JavaPlugin() {
     }
 
     fun defineLateInits() {
+        logging = LoggerFactory.getLogger("vholos")
         api = VholosAPI()
-        Companion.runnable = Runnable()
-        Companion.audience = BukkitAudiences.create(Bukkit.getPluginManager().getPlugin("vholos")!!)
-        Companion.logger = LoggerFactory.getLogger("vholos")
-        Companion.protocolManager = ProtocolLibrary.getProtocolManager()
-        Companion.instance = Bukkit.getPluginManager().getPlugin("vholos")!!
-        Companion.hologramUtils = Hologram()
+        runnable = Runnable()
+        audience = BukkitAudiences.create(Bukkit.getPluginManager().getPlugin("vholos")!!)
+        protocolManager = ProtocolLibrary.getProtocolManager()
+        instance = Bukkit.getPluginManager().getPlugin("vholos")!!
+        hologramUtils = Hologram()
     }
 
     fun registerCommands() {
