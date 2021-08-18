@@ -5,6 +5,11 @@ import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitTask
 
 class Tasks {
+
+    fun task(task: Runnable):BukkitTask {
+        return Bukkit.getScheduler().runTask(vholos.instance, task)
+    }
+
     fun asyncTask(task: Runnable):BukkitTask {
         return Bukkit.getScheduler().runTaskAsynchronously(vholos.instance, task)
     }

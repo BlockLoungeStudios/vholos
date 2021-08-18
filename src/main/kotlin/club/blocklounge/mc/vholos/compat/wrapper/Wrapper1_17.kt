@@ -58,12 +58,27 @@ class Wrapper1_17 {
         }
     }
 
+    fun getAllIndividualHologramsFromGeneralHologram(generalHologramInformation: Records.GeneralHologramInformation): List<Records.IndividualHologramInformation> {
+        var mutableListOfIndividualHolograms = mutableListOf<Records.IndividualHologramInformation>()
+        for (hologram in Runnable.hologramIndividualList) {
+            if (hologram.originalHologram.equals(generalHologramInformation)) {
+                mutableListOfIndividualHolograms.add(hologram)
+            }
+        }
+        for (hologram in Runnable.temporaryHologramIndividualList) {
+            if (hologram.originalHologram.equals(generalHologramInformation)) {
+                mutableListOfIndividualHolograms.add(hologram)
+            }
+        }
+        return mutableListOfIndividualHolograms
+    }
+
     fun getIndividualhologramFromGeneralHologramAndLine(baseInformation: Pair<Records.GeneralHologramInformation, Int>): Records.IndividualHologramInformation {
         for (hologram in Runnable.hologramIndividualList) {
             if (hologram.lineNumber == baseInformation.second && baseInformation.first.lines.contains(hologram.line)) {
                 return hologram
             }
         }
-        return Records.IndividualHologramInformation(0, "null", 0, Location(null, 0.0, 0.0, 0.0), 0, 0, UUID.randomUUID(), false)
+        return Records.IndividualHologramInformation(0, "null", 0, Location(null, 0.0, 0.0, 0.0), 0, UUID.randomUUID(), false, baseInformation.first)
     }
 }

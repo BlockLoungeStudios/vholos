@@ -41,6 +41,7 @@ class vholos : @Nullable CommandExecutor {
             Runnable.cacheCreate.clear()
             Runnable.cacheMeta.clear()
             Runnable.cacheDelete.clear()
+            Runnable.utilities.clearTotalHologramView()
             vholos.logger.info(" ~ Refreshed cache")
 
             Runnable.utilities.reloadOrLoadHologramList()
@@ -60,7 +61,7 @@ class vholos : @Nullable CommandExecutor {
 
     private fun create(sender: CommandSender, command: Command, label: String, args: Array<out String>) {
         if (sender.hasPermission("vholos.create") && sender is Player) {
-            Runnable.utilities.addHologramToAPIList(Records.GeneralHologramInformation(sender.name, listOf("Test"), sender.location, 2.24, 35))
+            Runnable.utilities.addHologramToAPIList(Records.GeneralHologramInformation(sender.name, listOf("%tab_placeholder_animation:scoreboardheader2%"), sender.location, 2.24, 35))
         }
         else {
             vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] You do not have permission"))

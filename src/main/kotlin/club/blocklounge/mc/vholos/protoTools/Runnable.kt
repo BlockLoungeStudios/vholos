@@ -29,6 +29,8 @@ class Runnable {
         var hologramInAPIList: MutableList<Records.GeneralHologramInformation> = mutableListOf()
         //The hologram individual information list for all holograms
         var hologramIndividualList: MutableList<Records.IndividualHologramInformation> = mutableListOf()
+        //The previous hologram individual information list for all holograms
+        var temporaryHologramIndividualList: MutableList<Records.IndividualHologramInformation> = mutableListOf()
         //Hologram view list of players who see the hologram
         var hologramViewList: HashMap<Int, Records.HologramViewers> = HashMap()
         //Hologram animation list for future
@@ -46,6 +48,9 @@ class Runnable {
                 for (hologram in hologramIndividualList) {
                     holoIndividualTask(hologram)
                 }
+                for (hologram in temporaryHologramIndividualList) {
+                    holoIndividualTask(hologram)
+                }
             }
         }
 
@@ -55,17 +60,17 @@ class Runnable {
 
     fun holoIndividualTask(individualHologramInformation: Records.IndividualHologramInformation) {
 
-        if (!hologramViewList.contains(individualHologramInformation.name)) {
+        if (!hologramViewList.contains(individualHologramInformation.eid)) {
             //Record if how many hologram viewers e.t.c if there is no list of viewers!
-            hologramViewList[individualHologramInformation.name] = Records.HologramViewers(listOf())
+            hologramViewList[individualHologramInformation.eid] = Records.HologramViewers(listOf())
         }
 
         //For each player see if they are viable and then send them a hologram
         for (player in Bukkit.getOnlinePlayers()) {
             if (utilities.isHologramCloseToPlayerLocation(player.location, individualHologramInformation.location, individualHologramInformation)) {
                 //If they just started to view it
-                if (!hologramViewList[individualHologramInformation.name]!!.mutableAudience.contains(player)) {
-                    utilities.addPlayerFromHologramViewList(individualHologramInformation.name, player)
+                if (!hologramViewList[individualHologramInformation.eid]!!.mutableAudience.contains(player)) {
+                    utilities.addPlayerFromHologramViewList(individualHologramInformation.eid, player)
                     utilities.sendCreatePacket(player, individualHologramInformation)
                     utilities.sendUpdatePacket(player, individualHologramInformation)
                 }
@@ -76,8 +81,8 @@ class Runnable {
             }
             else {
                 //If they were viewing it but no longer
-                if (hologramViewList[individualHologramInformation.name]!!.mutableAudience.contains(player)) {
-                    utilities.removePlayerFromHologramViewList(individualHologramInformation.name, player)
+                if (hologramViewList[individualHologramInformation.eid]!!.mutableAudience.contains(player)) {
+                    utilities.removePlayerFromHologramViewList(individualHologramInformation.eid, player)
                     utilities.sendDeletePacket(player, individualHologramInformation)
                 }
             }
