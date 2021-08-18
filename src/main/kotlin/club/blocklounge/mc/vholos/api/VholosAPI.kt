@@ -19,8 +19,12 @@ class VholosAPI {
         return Records.GeneralHologramInformation(uniqueName, lines, initLocation, 2.24, 35)
     }
 
-    fun getIndividualHolograms(): List<Records.IndividualHologramInformation> {
+    fun getNonTemporaryIndividualHolograms(): List<Records.IndividualHologramInformation> {
         return Runnable.hologramIndividualList
+    }
+
+    fun getTemporaryIndividualHolograms(): List<Records.IndividualHologramInformation> {
+        return Runnable.temporaryHologramIndividualList
     }
 
     fun getGeneralHologramsInDatabase(): List<Records.GeneralHologramInformation> {
