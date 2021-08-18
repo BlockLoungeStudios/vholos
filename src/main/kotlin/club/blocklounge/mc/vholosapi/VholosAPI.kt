@@ -1,4 +1,4 @@
-package club.blocklounge.mc.vholos.api
+package club.blocklounge.mc.vholosapi
 
 import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable

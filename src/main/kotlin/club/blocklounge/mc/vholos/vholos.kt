@@ -1,17 +1,16 @@
 package club.blocklounge.mc.vholos
 
-import club.blocklounge.mc.vholos.api.VholosAPI
 import club.blocklounge.mc.vholos.protoTools.Runnable
 import club.blocklounge.mc.vholos.utilities.Hologram
 import club.blocklounge.mc.vholos.utilities.Message
 import club.blocklounge.mc.vholos.utilities.Tasks
 import club.blocklounge.mc.vholos.utilities.Utils
+import club.blocklounge.mc.vholosapi.VholosAPI
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
-import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,10 +24,10 @@ class vholos : JavaPlugin() {
         lateinit var audience: BukkitAudiences
         lateinit var hologramUtils: Hologram
         lateinit var runnable: Runnable
+        private lateinit var api: VholosAPI
 
-
-        fun getAPI():VholosAPI {
-            return VholosAPI()
+        fun getApi(): VholosAPI {
+            return this.api
         }
 
         //TODO(API I HAVE NO IDEA!!!)
@@ -50,13 +49,14 @@ class vholos : JavaPlugin() {
         Bukkit.getConsoleSender().sendMessage("Welcome ~ vholos")
         Bukkit.getConsoleSender().sendMessage("Starting up!")
     }
-    
+
     override fun onDisable() {
         Bukkit.getScheduler().cancelTask(Runnable.holoTaskId)
         Bukkit.getConsoleSender().sendMessage("Goodbye ~ vholos")
     }
 
     fun defineLateInits() {
+        api = VholosAPI()
         Companion.runnable = Runnable()
         Companion.audience = BukkitAudiences.create(Bukkit.getPluginManager().getPlugin("vholos")!!)
         Companion.logger = LoggerFactory.getLogger("vholos")
