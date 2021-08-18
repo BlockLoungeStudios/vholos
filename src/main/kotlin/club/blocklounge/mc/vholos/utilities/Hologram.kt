@@ -1,12 +1,14 @@
 package club.blocklounge.mc.vholos.utilities
 
+import club.blocklounge.mc.vholos.compat.wrapper.Wrapper1_17
 import club.blocklounge.mc.vholos.protoTools.CompatabilityManager
 import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable
-import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramAnimation
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramInAPIList
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramInDatabaseFileList
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramIndividualList
+import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramPreviousFrame
+import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramViewList
 import club.blocklounge.mc.vholos.vholos
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketContainer
@@ -26,32 +28,51 @@ import kotlin.collections.HashMap
 
 
 class Hologram {
-    fun reloadOrLoadHologramList() {
-
+    fun clearAllLists() {
         hologramInDatabaseFileList.clear()
         hologramIndividualList.clear()
-        hologramAnimation.clear()
+        hologramPreviousFrame.clear()
+        hologramViewList.clear()
+        Wrapper1_17.mutableListOfIDs.clear()
+    }
 
-        addHologramsFromDatabase()
-
-        //The id for the hologram
-        //For each hologram
-        var j = 1
+    fun populateHologramIndividualList() {
         for (hologram in Runnable.database.readYamlFile()) {
             for ((i, line) in hologram.lines.withIndex()) {
 
                 val uniqueEntityID = vholos.wrapper1_17.getUniqueEntityId()
                 val uniqueUUID = UUID.randomUUID()
 
-                val eidPair = Pair(uniqueEntityID, uniqueUUID)
+                val hologramLocation = hologram.initLocation
+                val newLoc = Location(hologramLocation.world, hologramLocation.x, (hologramLocation.y - (i*hologram.lineSpacing)), hologramLocation.z)
+
+                hologramIndividualList.add(Records.IndividualHologramInformation(vholos.wrapper1_17.getUniqueInternalId(hologram, i), line, i, newLoc, hologram.viewDistance, uniqueEntityID, uniqueUUID, false))
+            }
+        }
+        for (hologram in hologramInAPIList) {
+            for ((i, line) in hologram.lines.withIndex()) {
+                val uniqueEntityID = vholos.wrapper1_17.getUniqueEntityId()
+                val uniqueUUID = UUID.randomUUID()
 
                 val hologramLocation = hologram.initLocation
                 val newLoc = Location(hologramLocation.world, hologramLocation.x, (hologramLocation.y - (i*hologram.lineSpacing)), hologramLocation.z)
 
-                hologramIndividualList.add(Records.IndividualHologramInformation(hologram.name, line, newLoc, hologram.viewDistance, uniqueEntityID, uniqueUUID, j))
-                j++
+                hologramIndividualList.add(Records.IndividualHologramInformation(vholos.wrapper1_17.getUniqueInternalId(hologram, i), line, i, newLoc, hologram.viewDistance, uniqueEntityID, uniqueUUID, true))
             }
         }
+    }
+
+    fun reloadOrLoadHologramList() {
+
+        //Sort previous holograms
+        clearTotalHologramView()
+        clearAllLists()
+
+        //Add new holograms
+        addHologramsFromDatabase()
+        clearUnused()
+        populateHologramIndividualList()
+
     }
 
     fun addHologramsFromDatabase() {
@@ -73,35 +94,18 @@ class Hologram {
         reloadOrLoadHologramList()
     }
 
-    fun removeHologramFromAPIList(generalHologramInformation: Records.GeneralHologramInformation) {
-        hologramInAPIList.remove(generalHologramInformation)
+    fun removeHologramFromAPIList(name: String) {
+        for (hologram in hologramInAPIList) {
+            if (hologram.name == name) {
+                hologramInAPIList.remove(hologram)
+            }
+        }
         reloadOrLoadHologramList()
     }
 
-    fun addHologramToInitialInformationList() {
-
-
-    }
-
-    fun removeHologramFromInitialInformationList(generalHologramInformation: Records.GeneralHologramInformation) {
-        //No idea
-    }
-
-    fun fromInitialInformationListRemoveIndividualHologramInformation( internalID: Int?, generalHologramInformation: Records.GeneralHologramInformation?) {
-        if (internalID != null) {
-            for (hologram in Runnable.hologramIndividualList) {
-                if (hologram.internalID == internalID) {
-                    Runnable.hologramIndividualList.remove(hologram)
-                }
-            }
-        }
-        else if (generalHologramInformation != null) {
-            for (hologram in Runnable.hologramIndividualList) {
-                if (hologram.name == generalHologramInformation.name) {
-                    Runnable.hologramIndividualList.remove(hologram)
-                }
-            }
-        }
+    fun removeHologramFromAPIList(generalHologramInformation: Records.GeneralHologramInformation) {
+        hologramInAPIList.remove(generalHologramInformation)
+        reloadOrLoadHologramList()
     }
 
     fun createDeletePacket(eid: Int): PacketContainer {
@@ -207,23 +211,18 @@ class Hologram {
     fun sendUpdatePacket(player: Player, individualHologramInformation: Records.IndividualHologramInformation) {
         val toSendPacket = createUpdatePacket(individualHologramInformation, player)
         try {
-            if (hologramAnimation.contains(individualHologramInformation.eid)) {
-                if (hologramAnimation[individualHologramInformation.eid]!!.containsKey(player)) {
-                    if (hologramAnimation[individualHologramInformation.eid]!![player]!! != toSendPacket) {
-                        vholos.protocolManager.sendServerPacket(player, toSendPacket)
-                    }
+            if (hologramPreviousFrame.contains(individualHologramInformation.name)) {
+                if (hologramPreviousFrame[individualHologramInformation.name] != toSendPacket) {
+                    vholos.protocolManager.sendServerPacket(player, toSendPacket)
                 }
                 else {
-                    hologramAnimation[individualHologramInformation.eid]!![player] = toSendPacket
+                    hologramPreviousFrame[individualHologramInformation.name] = toSendPacket
                     vholos.protocolManager.sendServerPacket(player, toSendPacket)
                 }
             }
             else {
                 //TODO(I have no idea what I am doing!)
-
-                val newHoloViewer: HashMap<Player, PacketContainer> = HashMap()
-                newHoloViewer[player] = toSendPacket
-                hologramAnimation[individualHologramInformation.eid] = newHoloViewer
+                hologramPreviousFrame[individualHologramInformation.name] = toSendPacket
                 vholos.protocolManager.sendServerPacket(player, toSendPacket)
             }
         }
@@ -295,27 +294,26 @@ class Hologram {
     }
 
     fun clearTotalHologramView() {
-        //Legacy unmarked code needs update!
-        var j = 1
-        var k = 0
-        for (hologram in hologramInDatabaseFileList) {
-            var i = 0
-            //For each line iteration
-            while (i < hologram.lines.size) {
-                for (onlinePlayer in Bukkit.getOnlinePlayers()) {
-                    if (Runnable.hologramViewList[j]!!.mutableAudience.contains(onlinePlayer)) {
-                        try {
-                            vholos.protocolManager.sendServerPacket(onlinePlayer, createDeletePacket(Runnable.hologramIndividualList[k].eid))
-                        }
-
-                        catch (e: IOException) {
-                            vholos.logger.error(e.toString())
-                        }
-                    }
+        for (hologram in hologramIndividualList) {
+            for (onlinePlayer in Bukkit.getOnlinePlayers()) {
+                try {
+                    vholos.protocolManager.sendServerPacket(onlinePlayer, createDeletePacket(hologram.eid))
                 }
-                i++
-                j++
-                k++
+                catch (e: IOException) {
+                    vholos.logger.error(e.toString())
+                }
+            }
+        }
+    }
+
+    fun clearUnused() {
+        for (hologram in hologramIndividualList) {
+            //For each line iteration
+            if (!Runnable.hologramViewList.containsKey(hologram.name)) {
+                //For each player on the server since view list doesn't exist!
+                for (player in Bukkit.getOnlinePlayers()) {
+                    vholos.protocolManager.sendServerPacket(player, createDeletePacket(hologram.eid))
+                }
             }
         }
     }

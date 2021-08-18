@@ -23,27 +23,19 @@ class Runnable {
         //Instances of useful information
 
 
-        //The cringe holograms in databaseyml
-        lateinit var hologramInDatabaseFileList: MutableList<Records.GeneralHologramInformation>
+        //The cringe holograms in database yml
+        var hologramInDatabaseFileList: MutableList<Records.GeneralHologramInformation> = mutableListOf()
         //The holograms to use in api
-        lateinit var hologramInAPIList: MutableList<Records.GeneralHologramInformation>
-        //The hologram individual information list
-        lateinit var hologramIndividualList: MutableList<Records.IndividualHologramInformation>
-        //Hologram view list
-        lateinit var hologramViewList: HashMap<Int, Records.HologramViewers>
-        //Hologram animation list
-        lateinit var hologramAnimation: HashMap<Int, HashMap<Player, PacketContainer>>
+        var hologramInAPIList: MutableList<Records.GeneralHologramInformation> = mutableListOf()
+        //The hologram individual information list for all holograms
+        var hologramIndividualList: MutableList<Records.IndividualHologramInformation> = mutableListOf()
+        //Hologram view list of players who see the hologram
+        var hologramViewList: HashMap<Int, Records.HologramViewers> = HashMap()
+        //Hologram animation list for future
+        var hologramPreviousFrame: HashMap<Int, PacketContainer> = HashMap()
     }
     
     fun runHologram() {
-        //Create new instances so that when reloaded new instances are made of all
-        hologramViewList = HashMap()
-        hologramAnimation = HashMap()
-
-        hologramInDatabaseFileList = mutableListOf()
-        hologramInAPIList = mutableListOf()
-        hologramIndividualList = mutableListOf()
-
         //Load the file so that it can be read
         database.loadYamlFile(Bukkit.getPluginManager().getPlugin("vholos")!!)
 
@@ -63,17 +55,17 @@ class Runnable {
 
     fun holoIndividualTask(individualHologramInformation: Records.IndividualHologramInformation) {
 
-        if (!hologramViewList.contains(individualHologramInformation.internalID)) {
-            hologramViewList[individualHologramInformation.internalID] = Records.HologramViewers(listOf())
+        if (!hologramViewList.contains(individualHologramInformation.name)) {
+            //Record if how many hologram viewers e.t.c if there is no list of viewers!
+            hologramViewList[individualHologramInformation.name] = Records.HologramViewers(listOf())
         }
 
         //For each player see if they are viable and then send them a hologram
         for (player in Bukkit.getOnlinePlayers()) {
             if (utilities.isHologramCloseToPlayerLocation(player.location, individualHologramInformation.location, individualHologramInformation)) {
-
                 //If they just started to view it
-                if (!hologramViewList[individualHologramInformation.internalID]!!.mutableAudience.contains(player)) {
-                    utilities.addPlayerFromHologramViewList(individualHologramInformation.internalID, player)
+                if (!hologramViewList[individualHologramInformation.name]!!.mutableAudience.contains(player)) {
+                    utilities.addPlayerFromHologramViewList(individualHologramInformation.name, player)
                     utilities.sendCreatePacket(player, individualHologramInformation)
                     utilities.sendUpdatePacket(player, individualHologramInformation)
                 }
@@ -84,8 +76,8 @@ class Runnable {
             }
             else {
                 //If they were viewing it but no longer
-                if (hologramViewList[individualHologramInformation.internalID]!!.mutableAudience.contains(player)) {
-                    utilities.removePlayerFromHologramViewList(individualHologramInformation.internalID, player)
+                if (hologramViewList[individualHologramInformation.name]!!.mutableAudience.contains(player)) {
+                    utilities.removePlayerFromHologramViewList(individualHologramInformation.name, player)
                     utilities.sendDeletePacket(player, individualHologramInformation)
                 }
             }

@@ -9,7 +9,7 @@ class Records {
     data class GeneralHologramInformation(val name: String, val lines: List<String>, val initLocation: Location, val lineSpacing: Double, val viewDistance: Int)
 
     @JvmRecord
-    data class IndividualHologramInformation(val name: String, val line: String, val location: Location, val viewDistance: Int, val eid: Int, val uuid: UUID, val internalID: Int)
+    data class IndividualHologramInformation(val name: Int, val line: String, val lineNumber: Int, val location: Location, val viewDistance: Int, val eid: Int, val uuid: UUID, val isAPI: Boolean)
 
     @JvmRecord
     data class HologramViewers(val mutableAudience: List<Player>)

@@ -1,5 +1,6 @@
 package club.blocklounge.mc.vholos
 
+import club.blocklounge.mc.vholos.api.VholosAPI
 import club.blocklounge.mc.vholos.protoTools.Runnable
 import club.blocklounge.mc.vholos.utilities.Hologram
 import club.blocklounge.mc.vholos.utilities.Message
@@ -22,7 +23,12 @@ class vholos : JavaPlugin() {
         lateinit var instance: Plugin
         lateinit var audience: BukkitAudiences
         lateinit var hologramUtils: Hologram
+        lateinit var runnable: Runnable
 
+        fun getAPI():VholosAPI {
+            return VholosAPI()
+        }
+        //TODO(API I HAVE NO IDEA!!!)
         val wrapper1_17 = club.blocklounge.mc.vholos.compat.wrapper.Wrapper1_17()
         val messageManager = Message()
         val taskManager = Tasks()
@@ -36,7 +42,7 @@ class vholos : JavaPlugin() {
         registerCommands()
         defineLateInits()
 
-        Runnable().runHologram()
+        runnable.runHologram()
 
         Bukkit.getConsoleSender().sendMessage("Welcome ~ vholos")
         Bukkit.getConsoleSender().sendMessage("Starting up!")
@@ -48,6 +54,7 @@ class vholos : JavaPlugin() {
     }
 
     fun defineLateInits() {
+        Companion.runnable = Runnable()
         Companion.audience = BukkitAudiences.create(Bukkit.getPluginManager().getPlugin("vholos")!!)
         Companion.logger = LoggerFactory.getLogger("vholos")
         Companion.protocolManager = ProtocolLibrary.getProtocolManager()

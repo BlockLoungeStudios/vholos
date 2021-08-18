@@ -1,10 +1,19 @@
 package club.blocklounge.mc.vholos.compat.wrapper
 
+import club.blocklounge.mc.vholos.protoTools.Records
+import club.blocklounge.mc.vholos.protoTools.Runnable
+import org.bukkit.Location
+import org.gradle.internal.impldep.it.unimi.dsi.fastutil.Hash
 import java.lang.reflect.Field
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.collections.HashMap
 
 
 class Wrapper1_17 {
+    companion object {
+        var mutableListOfIDs: HashMap<Int, Pair<Records.GeneralHologramInformation, Int>> = HashMap()
+    }
 
     private var ENTITY_ID: AtomicInteger? = null
 
@@ -21,5 +30,40 @@ class Wrapper1_17 {
             }
         }
         return ENTITY_ID!!.incrementAndGet()
+    }
+
+    fun getUniqueInternalId(individualHologramInformation: Records.GeneralHologramInformation, line: Int): Int {
+        repeat(mutableListOfIDs.size+1) { int ->
+            if (!mutableListOfIDs.contains(int)) {
+                mutableListOfIDs[int] = Pair(individualHologramInformation, line)
+                return int
+            }
+        }
+        return 0
+    }
+
+    fun clearUniqueInternalIds() {
+        mutableListOfIDs.clear()
+    }
+
+    fun getHologramsFromIds(): List<Pair<Records.GeneralHologramInformation, Int>> {
+        return mutableListOfIDs.values.toList()
+    }
+
+    fun getHologramFromId(id: Int): Records.IndividualHologramInformation {
+        return if (mutableListOfIDs.containsKey(id)) {
+            getIndividualhologramFromGeneralHologramAndLine(mutableListOfIDs[id]!!)
+        } else {
+            Runnable.hologramIndividualList.first()
+        }
+    }
+
+    fun getIndividualhologramFromGeneralHologramAndLine(baseInformation: Pair<Records.GeneralHologramInformation, Int>): Records.IndividualHologramInformation {
+        for (hologram in Runnable.hologramIndividualList) {
+            if (hologram.lineNumber == baseInformation.second && baseInformation.first.lines.contains(hologram.line)) {
+                return hologram
+            }
+        }
+        return Records.IndividualHologramInformation(0, "null", 0, Location(null, 0.0, 0.0, 0.0), 0, 0, UUID.randomUUID(), false)
     }
 }

@@ -1,10 +1,12 @@
 package club.blocklounge.mc.vholos.command.executor
 
+import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable
 import club.blocklounge.mc.vholos.vholos
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.jetbrains.annotations.Nullable
 
 class vholos : @Nullable CommandExecutor {
@@ -33,18 +35,20 @@ class vholos : @Nullable CommandExecutor {
     private fun reload(sender: CommandSender) {
         if (sender.hasPermission("vholos.reload")) {
             vholos.logger.info("Reloading started")
-            vholos.hologramUtils.clearTotalHologramView()
             vholos.taskManager.cancelTask(Runnable.holoTaskId)
             vholos.logger.info(" ~ Cancelled task")
 
             Runnable.cacheCreate.clear()
             Runnable.cacheMeta.clear()
             Runnable.cacheDelete.clear()
+            vholos.logger.info(" ~ Refreshed cache")
 
             Runnable.utilities.reloadOrLoadHologramList()
+            vholos.logger.info(" ~ Reloaded holograms from lists")
 
-            Runnable().runHologram()
-            vholos.logger.info(" ~ Refreshed cache")
+            vholos.runnable = Runnable()
+            vholos.runnable.runHologram()
+            vholos.logger.info(" ~ Created new instance and ran it")
 
             vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] Reloaded!"))
             vholos.logger.info("Reloading complete")
@@ -55,12 +59,8 @@ class vholos : @Nullable CommandExecutor {
     }
 
     private fun create(sender: CommandSender, command: Command, label: String, args: Array<out String>) {
-        if (sender.hasPermission("vholos.create")) {
-            //TO BE MADE!!! THIS COMMAND DOESN'T WORK
-//            vholos.hologramUtils.clearTotalHologramView()
-//            vholos.taskManager.cancelTask(Runnable.holoTaskId)
-//            Runnable().runHologram()
-//            vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] Reloaded!"))
+        if (sender.hasPermission("vholos.create") && sender is Player) {
+            Runnable.utilities.addHologramToAPIList(Records.GeneralHologramInformation(sender.name, listOf("Test"), sender.location, 2.24, 35))
         }
         else {
             vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] You do not have permission"))
