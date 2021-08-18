@@ -1,0 +1,146 @@
+import java.text.SimpleDateFormat
+
+plugins {
+    id "java"
+    id "maven-publish"
+    id "org.jetbrains.kotlin.jvm" version "1.5.21"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "io.github.slimjar" version "1.3.0"
+}
+
+group = "club.blocklounge.mc.vholos"
+version = "1.0.11"
+sourceCompatibility = JavaVersion.VERSION_16
+
+ext {
+    basePlace = "club.blocklounge.mc.vholos.shaded."
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+
+    maven {
+        url = "https://gitlab.com/api/v4/projects/19978391/packages/maven"
+    }
+    maven {
+        url = "https://mvn.intellectualsites.com/content/repositories/thirdparty/"
+    }
+    maven {
+        url = "https://papermc.io/repo/repository/maven-public/"
+    }
+    maven {
+        url = "https://repo.dmulloy2.net/repository/public/"
+    }
+    maven {
+        url = "https://libraries.minecraft.net"
+    }
+    maven {
+        url = "https://jitpack.io"
+    }
+    maven {
+        url = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
+    }
+    maven {
+        name = "vholos"
+        url = uri("https://maven.pkg.github.com/vq9/vholos")
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
+}
+
+shadowJar {
+    //minimize()
+    archiveFileName = "VHolos-${project.version}.jar"
+    relocate "io.github.slimjar", "${basePlace}slimjar"
+}
+
+slimJar {
+    relocate "com.github", "${basePlace}cache"
+    relocate "net.kyori.adventure.text.minimessage", "${basePlace}minimessage"
+    relocate "com.google", "${basePlace}google"
+    relocate "org.jetbrains", "${basePlace}kotlin"
+}
+
+dependencies {
+    //Slim Jar
+    implementation slimjar("1.2.6")
+
+    // Adventure / MiniMessage
+    implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
+    implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
+
+    // Logger
+    implementation("org.slf4j:slf4j-api:1.7.25")
+
+    // Cache
+    implementation("com.github.ben-manes.caffeine:caffeine:3.0.3")
+
+    // Kotlin Collection
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
+
+    // PlaceholderAPI
+    compileOnly("me.clip:placeholderapi:2.10.10")
+
+    // Bukkit Version
+    compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
+
+    // Protocol Lib
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+}
+
+sourceSets {
+    test.compileClasspath += configurations.compileOnly
+    test.runtimeClasspath += configurations.compileOnly
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "16"
+    kotlinOptions.javaParameters = true
+    kotlinOptions.freeCompilerArgs = ["-Xjvm-default=all"]
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "vholos"
+            url = uri("https://maven.pkg.github.com/vq9/vholos")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_16
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy = DuplicatesStrategy.WARN
+        include "plugin.yml"
+        expand(
+                name: rootProject.name,
+                main: project.group + ".module.internal.boot.PluginBoot",
+                version: project.version,
+                built: new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),
+                builder: System.properties.getProperty("user.name"),
+                os: System.properties.getProperty("os.name") + System.properties.getProperty("os.arch") + System.properties.getProperty("os.version")
+        )
+    }
+}
+
+
