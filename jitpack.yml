@@ -1,7 +1,0 @@
-jdk:
-  - openjdk16
-before_install:
-  - echo "Before Install"
-  - ./ensure-java-16 install
-
-# Props to https://github.com/jitpack/jitpack.io/issues/4355#issuecomment-744678253

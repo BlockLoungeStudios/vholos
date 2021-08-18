@@ -1,9 +1,9 @@
 /target/
-build.gradle
 .settings
 .classpath
 .project
 /.idea/
+.env
 *.iml
 dependency-reduced-pom.xml
 .floo*
@@ -19,3 +19,4 @@ build
 out
 
 
+.env
