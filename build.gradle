@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "club.blocklounge.mc.vholos"
-version = "1.0.4"
+version = "1.0.5"
 sourceCompatibility = JavaVersion.VERSION_16
 
 ext {
