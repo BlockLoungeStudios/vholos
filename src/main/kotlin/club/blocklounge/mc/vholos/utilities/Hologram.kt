@@ -1,5 +1,6 @@
 package club.blocklounge.mc.vholos.utilities
 
+import club.blocklounge.mc.vholos.Vholos
 import club.blocklounge.mc.vholos.protoTools.CompatabilityManager
 import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable
@@ -9,7 +10,6 @@ import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramIndividu
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramPreviousFrame
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.hologramViewList
 import club.blocklounge.mc.vholos.protoTools.Runnable.Companion.temporaryHologramIndividualList
-import club.blocklounge.mc.vholos.vholos
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketContainer
 import com.comphenix.protocol.wrappers.WrappedChatComponent
@@ -44,13 +44,13 @@ class Hologram {
     }
 
     fun calculateToAddToHologramIndividualList(i: Int, line: String, generalHologramInformation: Records.GeneralHologramInformation, isTemp: Boolean): Records.IndividualHologramInformation {
-        val uniqueEntityID = vholos.wrapper1_17.getUniqueEntityId()
+        val uniqueEntityID = Vholos.wrapper1_17.getUniqueEntityId()
         val uniqueUUID = UUID.randomUUID()
 
         val hologramLocation = generalHologramInformation.initLocation
         val newLoc = Location(hologramLocation.world, hologramLocation.x, (hologramLocation.y - (i*generalHologramInformation.lineSpacing)), hologramLocation.z)
 
-        return Records.IndividualHologramInformation(vholos.wrapper1_17.getUniqueInternalId(generalHologramInformation, i), line, i, newLoc, uniqueEntityID, uniqueUUID, isTemp, generalHologramInformation)
+        return Records.IndividualHologramInformation(Vholos.wrapper1_17.getUniqueInternalId(generalHologramInformation, i), line, i, newLoc, uniqueEntityID, uniqueUUID, isTemp, generalHologramInformation)
     }
 
     fun addToHologramIndividualList(individualHologramInformation: Records.IndividualHologramInformation, isTemp: Boolean) {
@@ -100,7 +100,7 @@ class Hologram {
         for (hologram in hologramInAPIList) {
             if (hologram.name == name) {
                 hologramInAPIList.remove(hologram)
-                for (individualHologram in vholos.wrapper1_17.getAllIndividualHologramsFromGeneralHologram(hologram)) {
+                for (individualHologram in Vholos.wrapper1_17.getAllIndividualHologramsFromGeneralHologram(hologram)) {
                     temporaryHologramIndividualList.remove(individualHologram)
                 }
             }
@@ -124,10 +124,10 @@ class Hologram {
     fun sendDeletePacket(player: Player, individualHologramInformation : Records.IndividualHologramInformation) {
         val toSendPacket = createDeletePacket(individualHologramInformation.eid)
         try {
-            vholos.protocolManager.sendServerPacket(player, toSendPacket)
+            Vholos.protocolManager.sendServerPacket(player, toSendPacket)
         }
         catch (e: IOException) {
-            vholos.logging.error(e.toString())
+            Vholos.logging.error(e.toString())
         }
     }
 
@@ -216,21 +216,21 @@ class Hologram {
         try {
             if (hologramPreviousFrame.contains(individualHologramInformation.name)) {
                 if (hologramPreviousFrame[individualHologramInformation.name] != toSendPacket) {
-                    vholos.protocolManager.sendServerPacket(player, toSendPacket)
+                    Vholos.protocolManager.sendServerPacket(player, toSendPacket)
                 }
                 else {
                     hologramPreviousFrame[individualHologramInformation.name] = toSendPacket
-                    vholos.protocolManager.sendServerPacket(player, toSendPacket)
+                    Vholos.protocolManager.sendServerPacket(player, toSendPacket)
                 }
             }
             else {
                 //TODO(I have no idea what I am doing!)
                 hologramPreviousFrame[individualHologramInformation.name] = toSendPacket
-                vholos.protocolManager.sendServerPacket(player, toSendPacket)
+                Vholos.protocolManager.sendServerPacket(player, toSendPacket)
             }
         }
         catch (e: IOException) {
-            vholos.logging.error(e.toString())
+            Vholos.logging.error(e.toString())
         }
     }
 
@@ -260,12 +260,12 @@ class Hologram {
         val toSendPacket1 = createCreatePacket(individualHologramInformation)
         val toSendPacket2 = createUpdatePacket(individualHologramInformation, player)
         try {
-            vholos.protocolManager.sendServerPacket(player, toSendPacket1)
-            vholos.protocolManager.sendServerPacket(player, toSendPacket2)
+            Vholos.protocolManager.sendServerPacket(player, toSendPacket1)
+            Vholos.protocolManager.sendServerPacket(player, toSendPacket2)
             //Runnable.prevMetaPacket[player] = toSendPackets.second
         }
         catch (e: IOException) {
-            vholos.logging.error(e.toString())
+            Vholos.logging.error(e.toString())
         }
     }
 
@@ -300,10 +300,10 @@ class Hologram {
         for (hologram in hologramIndividualList) {
             for (onlinePlayer in Bukkit.getOnlinePlayers()) {
                 try {
-                    vholos.protocolManager.sendServerPacket(onlinePlayer, createDeletePacket(hologram.eid))
+                    Vholos.protocolManager.sendServerPacket(onlinePlayer, createDeletePacket(hologram.eid))
                 }
                 catch (e: IOException) {
-                    vholos.logging.error(e.toString())
+                    Vholos.logging.error(e.toString())
                 }
             }
         }

@@ -1,11 +1,10 @@
 package club.blocklounge.mc.vholos.protoTools
 
+import club.blocklounge.mc.vholos.Vholos
 import club.blocklounge.mc.vholos.file.Database
 import club.blocklounge.mc.vholos.utilities.Hologram
-import club.blocklounge.mc.vholos.vholos
 import com.comphenix.protocol.events.PacketContainer
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 
 class Runnable {
@@ -39,7 +38,7 @@ class Runnable {
     
     fun runHologram() {
         //Load the file so that it can be read
-        database.loadYamlFile(Bukkit.getPluginManager().getPlugin("vholos")!!)
+        database.loadYamlFile(Bukkit.getPluginManager().getPlugin("Vholos")!!)
 
         //The task
         utilities.reloadOrLoadHologramList()
@@ -54,7 +53,7 @@ class Runnable {
             }
         }
 
-        val theTask = vholos.taskManager.asyncTimer(2L, task)
+        val theTask = Vholos.taskManager.asyncTimer(2L, task)
         holoTaskId = theTask.taskId
     }
 

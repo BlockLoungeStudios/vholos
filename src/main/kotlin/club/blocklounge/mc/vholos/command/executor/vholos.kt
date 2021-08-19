@@ -1,8 +1,8 @@
 package club.blocklounge.mc.vholos.command.executor
 
+import club.blocklounge.mc.vholos.Vholos
 import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable
-import club.blocklounge.mc.vholos.vholos
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -13,7 +13,7 @@ class vholos : @Nullable CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         when {
             args.isEmpty() -> {
-                vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] Select a sub option!"))
+                Vholos.messageManager.sendMessage(sender, Vholos.messageManager.createMessage("<red>[Vholos] Select a sub option!"))
             }
             args.isNotEmpty() -> {
                 when {
@@ -24,7 +24,7 @@ class vholos : @Nullable CommandExecutor {
                         create(sender, command, label, args)
                     }
                     else -> {
-                        vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] Select a valid sub option!"))
+                        Vholos.messageManager.sendMessage(sender, Vholos.messageManager.createMessage("<red>[Vholos] Select a valid sub option!"))
                     }
                 }
             }
@@ -33,38 +33,38 @@ class vholos : @Nullable CommandExecutor {
     }
 
     private fun reload(sender: CommandSender) {
-        if (sender.hasPermission("vholos.reload")) {
-            vholos.logging.info("Reloading started")
-            vholos.taskManager.cancelTask(Runnable.holoTaskId)
-            vholos.logging.info(" ~ Cancelled task")
+        if (sender.hasPermission("Vholos.reload")) {
+            Vholos.logging.info("Reloading started")
+            Vholos.taskManager.cancelTask(Runnable.holoTaskId)
+            Vholos.logging.info(" ~ Cancelled task")
 
             Runnable.cacheCreate.clear()
             Runnable.cacheMeta.clear()
             Runnable.cacheDelete.clear()
             Runnable.utilities.clearTotalHologramView()
-            vholos.logging.info(" ~ Refreshed cache ~")
+            Vholos.logging.info(" ~ Refreshed cache ~")
 
             Runnable.utilities.reloadOrLoadHologramList()
-            vholos.logging.info(" ~ Reloaded holograms from lists")
+            Vholos.logging.info(" ~ Reloaded holograms from lists")
 
-            vholos.runnable = Runnable()
-            vholos.runnable.runHologram()
-            vholos.logging.info(" ~ Created new instance and ran it")
+            Vholos.runnable = Runnable()
+            Vholos.runnable.runHologram()
+            Vholos.logging.info(" ~ Created new instance and ran it")
 
-            vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] Reloaded!"))
-            vholos.logging.info("Reloading complete")
+            Vholos.messageManager.sendMessage(sender, Vholos.messageManager.createMessage("<red>[Vholos] Reloaded!"))
+            Vholos.logging.info("Reloading complete")
         }
         else {
-            vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] You do not have permission"))
+            Vholos.messageManager.sendMessage(sender, Vholos.messageManager.createMessage("<red>[Vholos] You do not have permission"))
         }
     }
 
     private fun create(sender: CommandSender, command: Command, label: String, args: Array<out String>) {
-        if (sender.hasPermission("vholos.create") && sender is Player) {
+        if (sender.hasPermission("Vholos.create") && sender is Player) {
             Runnable.utilities.addHologramToAPIList(Records.GeneralHologramInformation(sender.name, listOf("Test"), sender.location, 2.24, 35))
         }
         else {
-            vholos.messageManager.sendMessage(sender, vholos.messageManager.createMessage("<red>[vholos] You do not have permission"))
+            Vholos.messageManager.sendMessage(sender, Vholos.messageManager.createMessage("<red>[Vholos] You do not have permission"))
         }
     }
 

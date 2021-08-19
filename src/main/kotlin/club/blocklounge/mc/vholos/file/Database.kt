@@ -1,8 +1,8 @@
 package club.blocklounge.mc.vholos.file
 
+import club.blocklounge.mc.vholos.Vholos
 import club.blocklounge.mc.vholos.protoTools.Records
 import club.blocklounge.mc.vholos.protoTools.Runnable
-import club.blocklounge.mc.vholos.vholos
 import org.bukkit.Location
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
@@ -39,7 +39,7 @@ class Database {
                 mutableHologramList.add(createHologramFromNameInDatabase(name))
             }
             catch (e: Exception) {
-                vholos.logging.error(e.toString())
+                Vholos.logging.error(e.toString())
             }
         }
         //addToListIDs(mutableHologramList)
@@ -64,7 +64,7 @@ class Database {
                 }
             }
             else {
-                vholos.logging.error("The database file is incorrectly made!")
+                Vholos.logging.error("The database file is incorrectly made!")
             }
         }
         return Records.GeneralHologramInformation("null", listOf("null", "null"), Location(null, 0.0, 0.0, 0.0), 0.0, 0)

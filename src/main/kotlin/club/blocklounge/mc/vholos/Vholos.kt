@@ -16,7 +16,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 
-class vholos : JavaPlugin() {
+class Vholos : JavaPlugin() {
     companion object {
         lateinit var logging: Logger
         lateinit var protocolManager: ProtocolManager
